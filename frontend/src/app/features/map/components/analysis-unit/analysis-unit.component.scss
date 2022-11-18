@@ -1,0 +1,30 @@
+.analysis-unit-container{
+    background-color: white;
+    border-radius: 5px;
+}
+
+.layer-pill{
+    border: 1px solid #ccc;
+    background-color: #eee;
+    border-radius: 5px;
+}
+
+.depth-profile-graph{
+    height: 500px;
+    width: 100%;
+}
+
+.timeseries-profile-graph{
+    height: 500px;
+    width: 100%;
+}
+
+.selectable{
+    cursor: pointer;
+}
+
+.loading-analysis{
+    margin: 20px auto;
+    font-size: 30px;
+    text-align: center;
+}

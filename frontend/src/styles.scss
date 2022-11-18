@@ -1,0 +1,53 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap';
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3&family=Work+Sans&display=swap');
+
+h1, h2 {
+  font-family: 'Work Sans', sans-serif!important;
+}
+
+body{
+  font-family: 'Source Sans 3', sans-serif!important;
+}
+
+body{
+    overflow-x: hidden !important;
+}
+
+/* OpenLayers custom styles */
+.ol-attribution{
+    left: 5px!important;
+    right: auto!important;
+}
+
+.ol-scale-line{
+    bottom: 45px!important;
+}
+
+/*CUSTOM SCROLLBAR*/
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
+  /*CUSTOM SCROLLBAR*/
+
+  :root{
+    --bs-font-sans-serif: 'Source Sans 3', sans-serif!important;
+  }

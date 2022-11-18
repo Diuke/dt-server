@@ -1,0 +1,363 @@
+<div class="loading-fullscreen" *ngIf="loading">
+    <div class="loader"></div>
+</div>
+
+<div class="loading-fullscreen-scenario" *ngIf="loadingScenario">
+    <div class="loader loader-scenario"></div>
+    <div class="">
+        <h3>Loading Scenario</h3>
+        <h3>This may take a while</h3>
+    </div>
+    
+</div>
+
+<div class="main-wrapper">
+    <div class="icon-left-container" (click)="toggleLeftSidebar()"
+        [class]="{'icon-left-open': sidebarLeftOpen, 'icon-left-closed': !sidebarLeftOpen}">
+        <fa-icon *ngIf="sidebarLeftOpen" class="icon" [icon]="_faLessThan"></fa-icon>
+        <fa-icon *ngIf="!sidebarLeftOpen" class="icon" [icon]="_faGreaterThan"></fa-icon>
+    </div>
+
+    <div class="icon-right-container" (click)="toggleRightSidebar()"
+        [class]="{'icon-right-open': sidebarRightOpen, 'icon-right-closed': !sidebarRightOpen}">
+        <fa-icon *ngIf="sidebarRightOpen" class="icon" [icon]="_faGreaterThan"></fa-icon>
+        <fa-icon *ngIf="!sidebarRightOpen" class="icon" [icon]="_faLessThan"></fa-icon>
+    </div>
+
+    <div class="sidebar-left" [class]="{'sidebar-left-open': sidebarLeftOpen, 'sidebar-left-closed': !sidebarLeftOpen}">
+
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-context-tab" data-bs-toggle="tab" data-bs-target="#nav-context"
+                    type="button" role="tab" aria-controls="nav-context" aria-selected="true">Context</button>
+                <button class="nav-link" id="nav-selection-tab" data-bs-toggle="tab" data-bs-target="#nav-selection"
+                    type="button" role="tab" aria-controls="nav-selection" aria-selected="true">Selection</button>
+            </div>
+        </nav>
+
+        <div class="tab-content" id="nav-tabContent">
+            <!-- Tab Context -->
+            <div class="tab-pane container fade show active" id="nav-context" role="tabpanel"
+                aria-labelledby="nav-context-tab">
+                <div class="context-section">
+                    <span>Maritime Limits</span>
+                    <select [disabled]="contextState == CONTEXT_SET" class="form-select"
+                        aria-label="Default select example" [(ngModel)]="selectedLimit"
+                        (change)="changeSelectedLimit()">
+                        <option value="3">Unbounded</option>
+                        <option value="1">12NM sea</option>
+                        <option value="2">Official sea limits</option>
+                    </select>
+                </div>
+
+                <div class="context-section">
+                    <span>From Date</span>
+                    <div class="">
+                        <input [disabled]="contextState == CONTEXT_SET" [(ngModel)]="dateFrom" type="date"
+                            class="form-control">
+                    </div>
+                </div>
+
+                <div class="context-section">
+                    <span>To Date</span>
+                    <div class="">
+                        <input [disabled]="contextState == CONTEXT_SET" [(ngModel)]="dateTo" type="date"
+                            class="form-control">
+                    </div>
+                </div>
+
+                <div class="context-section text-center">
+                    <button *ngIf="aoiState == NO_AOI" class="btn btn-dark w-100" (click)="toggleDrawingAOI()">
+                        Draw AOI
+                    </button>
+                    <button *ngIf="aoiState == DRAWING_AOI" class="btn btn-warning w-100" (click)="toggleDrawingAOI()">
+                        Reset Drawing
+                    </button>
+                    <button [disabled]="contextState == CONTEXT_SET" *ngIf="aoiState == SELECTED_AOI"
+                        class="btn btn-danger w-100" (click)="toggleDrawingAOI()">
+                        Remove AOI
+                    </button>
+
+                    <!--
+                    <span class="w-100">OR</span>
+
+                    <button [disabled]="aoiState == SELECTED_AOI" class="btn btn-secondary w-100">
+                        Load AOI from file
+                    </button>
+                    -->
+                </div>
+
+                <div class="context-section text-center">
+                    <button *ngIf="contextState == CONTEXT_NOT_SET" (click)="setContext()"
+                        class="btn btn-success w-100">
+                        Set Context
+                    </button>
+                    <button *ngIf="contextState == CONTEXT_SET" class="btn btn-success w-100" (click)="resetContext()">
+                        Reset Context
+                    </button>
+                </div>
+
+                <div class="context-bottom text-center">
+                    <input hidden #file type="file" accept="application/JSON" (change)="uploadAplicationStateFile(file.files)">
+                    <button #upload
+                        (click)="file.click()"
+                        class="btn btn-scenario w-100">
+                        Load Scenario
+                    </button>
+                </div>
+            </div>
+            <!-- END Tab Context -->
+
+            <!-- Tab Layers Selection -->
+            <div class="tab-pane fade" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
+                <div class="mt-3">
+                    <div class="text-center w-100" *ngIf="layersHierarchy.length == 0 && loadingLayers">
+                        <p class="">Loading Layers List...</p>
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                    <div class="text-center w-100" *ngIf="layersHierarchy.length == 0 && !loadingLayers">
+                        <span class="" >No Layers To Select</span>
+                    </div>
+
+                    <div *ngIf="layersHierarchy.length > 0" class="container">
+                        <div class="form-group mb-2">
+                            <input type="text" [(ngModel)]="layerFilter" class="form-control" aria-describedby="Analysis Name" placeholder="Search..." (input)="filterLayers()">
+                        </div>
+                        <div class="spinner-border text-center" role="status" *ngIf="loadingFilter">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div *ngIf="!loadingFilter">
+                            <div *ngFor="let node of displayLayersHierarchy" #treeViewComponent>
+                                <app-tree-view [node]="node" (layerManipulation)="handleLayerManipulation($event)">
+                                </app-tree-view>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END Tab Layers Selection -->
+        </div>
+    </div>
+
+    <div class="sidebar-right" [class]="{'sidebar-right-open': sidebarRightOpen, 'sidebar-right-closed': !sidebarRightOpen}">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-layers-tab" data-bs-toggle="tab" data-bs-target="#nav-layers"
+                    type="button" role="tab" aria-controls="nav-layers" aria-selected="true">Layers</button>
+
+                <button class="nav-link" id="nav-analysis-tab" data-bs-toggle="tab" data-bs-target="#nav-analysis"
+                    type="button" role="tab" aria-controls="nav-analysis" aria-selected="false">Analysis</button>
+                <button class="nav-link" id="nav-scenarios-tab" data-bs-toggle="tab" data-bs-target="#nav-scenarios"
+                    type="button" role="tab" aria-controls="nav-scenarios"
+                    aria-selected="false">Scenarios</button>
+            </div>
+        </nav>
+
+        <div class="tab-content" id="nav-tabContent">
+
+            <!-- Tab Layers -->
+            <div class="tab-pane fade show active" id="nav-layers" role="tabpanel" aria-labelledby="nav-layers-tab">
+                <div class="mt-3">
+                    <div class="text-center w-100">
+                        <span class="" *ngIf="listOfSelectedLayers.length == 0">No Layers Selected</span>
+                    </div>
+
+                    <div *ngIf="listOfSelectedLayers.length > 0" class="container">
+                        <ul class="list-group">
+                            <li class="list-group-item mb-3" *ngFor="let layer of listOfSelectedLayers">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-9">
+                                            <label class="form-check-label selected-layer-text"
+                                                [for]="'layer' + layer.data.id" data-bs-toggle="tooltip"
+                                                data-bs-placement="top" title="Tooltip on top">
+                                                <span>{{layer.data.readable_name}}</span>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">
+                                            <ng-template #layerDataDescription>{{layer.data.description}}</ng-template>
+                                            <a type="button" placement="left" [ngbPopover]="layerDataDescription">
+                                                <fa-icon class="selectable" [icon]="_faInfoCircle"
+                                                    (click)="openInfoLayer(layer.data.id)"></fa-icon>
+                                            </a>
+                                        </div>
+                                        <div class="col-1">
+                                            <fa-icon *ngIf="layer.visible" class="eye-visible selectable"
+                                                [icon]="_faEye" (click)="handleLayerManipulation({ id: layer.data.id, value: false, event: 'visibility' })">
+                                            </fa-icon>
+                                            <fa-icon *ngIf="!layer.visible" class="eye-invisible selectable"
+                                                [icon]="_faEyeSlash" (click)="handleLayerManipulation({ id: layer.data.id, value: true, event: 'visibility' })">
+                                            </fa-icon>
+                                        </div>
+                                        <div class="col-1">
+                                            <fa-icon (click)="toggleLayerExpanded(layer.data.id)" *ngIf="layer.expanded"
+                                                class="selectable" [icon]="_faChevronUp"></fa-icon>
+                                            <fa-icon (click)="toggleLayerExpanded(layer.data.id)"
+                                                *ngIf="!layer.expanded" class="selectable" [icon]="_faChevronDown">
+                                            </fa-icon>
+                                        </div>
+
+                                    </div>
+                                    <div [hidden]="!layer.expanded">
+                                        <hr>
+                                        <div>
+                                            <label class="form-label">Opacity</label>
+                                            <input type="range" [(ngModel)]="layer.opacity" min="0" max="100"
+                                                class="form-range"
+                                                (change)="handleLayerManipulation({ id: layer.data.id, value: layer.opacity, event: 'opacity' })">
+                                        </div>
+                                        <hr>
+                                        <div *ngFor="let param of layer.params">
+                                            <div *ngIf="layer.paramsObject[param] && layer.paramsObject[param].selected != undefined">
+                                                <label class="form-label">{{param}}</label>
+                                                <select [(ngModel)]="layer.paramsObject[param].selected"
+                                                    (change)="setLayerParameter(layer.data.id)" class="form-select">
+                                                    <option *ngFor="let optionValue of layer.paramsObject[param].values"
+                                                        [value]="optionValue">{{optionValue}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-4">
+                                            <img [src]="layer.data.legend_url" alt="">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- END Tab Layers -->
+
+            <!-- Tab analysis -->
+            <div class="tab-pane fade" id="nav-analysis" role="tabpanel" aria-labelledby="nav-analysis-tab">
+                <div class="container-fluid my-3">
+                    <app-analysis-unit #analysisUnitComponent
+                        *ngFor="let unit of analysisUnits; index as i"
+                        class="mb-3"
+                        [layerMap]="layerMap"
+                        [unitIndex]="i"
+                        (deleteAnalysis)="removeAnalysisHandler($event)"
+                        [initializationData]="unit"
+                    ></app-analysis-unit>
+
+                    <button class="btn btn-secondary w-100"
+                        (click)="createAnalysisUnit()">
+                        Add
+                    </button>
+
+                </div>
+                
+            </div>
+            <!-- END Tab Analysis -->
+
+            <!-- Tab Scenarios -->
+            <div class="tab-pane fade" id="nav-scenarios" role="tabpanel" aria-labelledby="nav-scenarios-tab">
+                <div *ngIf="isLoggedIn"></div>
+                <div class="container-fluid my-3">
+                    <button class="btn btn-scenario w-100"
+                        (click)="downloadScenario()">
+                        Download Scenario
+                    </button>
+
+                </div>
+                
+                <hr>
+                <!--
+                <div class="container-fluid my-3">
+                    <div class="mb-1">
+                        <small>Scenario Name</small>
+                        <input type="text" [(ngModel)]="scenarioName" class="form-control" placeholder="Add a name">
+                    </div>
+                    <button class="btn btn-scenario w-100" 
+                        (click)="saveScenario()">
+                        Save Scenario
+                    </button>
+                </div>
+
+                <hr>
+                <div *ngIf="userScenarios.length > 0" class="container">
+                    <h4 class="mt-5 mb-3 text-center">User Scenarios</h4>
+
+                    <ul class="list-group">
+                        <li class="list-group-item mb-3" *ngFor="let scenario of userScenarios">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-11">
+                                        <label class="form-check-label selected-layer-text"
+                                            [for]="'scenario' + scenario.id" data-bs-toggle="tooltip"
+                                            data-bs-placement="top" title="Tooltip on top">
+                                            <span>{{scenario.name}}</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-1">
+                                        <fa-icon (click)="deleteScenario(scenario)" class="selectable" [icon]="_faTrash"></fa-icon>
+                                    </div>
+
+                                </div>
+                                <div class="row mt-3">
+                                    <button class="btn btn-scenario w-100"
+                                        (click)="applyScenario(scenario)">
+                                        Apply
+                                    </button>
+                                </div>
+
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            -->
+            </div>
+            
+            <!-- END Tab Scenarios -->
+
+        </div>
+    </div>
+
+    <!--
+    <div class="mouse-position" id="mouse-position">
+    </div>
+    -->
+    
+    <div [class]="{'left-margin': sidebarLeftOpen}" class="basemap-picker ol-control">
+        <button ngbTooltip="Basemaps" [openDelay]="500" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="margin: 0 auto">
+            <fa-icon [icon]="_faLayers"></fa-icon>
+        </button>
+
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="changeBasemap(OSM_BASEMAP)">OpenStreetMap</a></li>
+            <li><a class="dropdown-item" (click)="changeBasemap(SATELLITE_BASEMAP)">Satellite - Sentinel-2 Cloudless</a></li>
+        </ul>
+
+    </div>
+
+    <div class="map-container" [class]="{'left-margin': sidebarLeftOpen, 'right-margin': sidebarRightOpen}" id="map">
+        <!--
+        <div class="date-slider"
+            [class]="{'slider-left': sidebarLeftOpen, 'slider-right': sidebarRightOpen, 'slider-both': sidebarLeftOpen && sidebarRightOpen}"
+        >
+            <input type="range" class="form-range" min="01-01-2020" max="01-01-2021" id="date-slider" [(ngModel)]="globalDateSlider">
+            <span>{{globalDateSlider}}</span>
+        </div>
+        -->
+    </div>
+
+    <!-- Click Popup START -->
+    <div id="dataPreviewPopup" class="ol-popup">
+        <a style="cursor: pointer;" id="popup-closer" class="ol-popup-closer" (click)="closePopup()"></a>
+        <div class="spinner-border" role="status" *ngIf="loadingClickPopupValues">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div id="dataPreviewPopupContent" *ngFor="let value of dataPreviewPopupContent; let i = index">
+            <span>{{value?.layer}}</span>
+            <span>{{value?.value}}</span>
+            <hr *ngIf="i < dataPreviewPopupContent.length-1">
+        </div>
+    </div>
+    <!-- Click Popup END -->
+
+</div>
