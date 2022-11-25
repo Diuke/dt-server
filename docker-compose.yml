@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  django-backend:
+    build:
+      context: ./backend
+      
+    #command: python manage.py runserver 0.0.0.0:8010
+    ports:
+      - 8000:8000
+    env_file:
+      - ./backend/.env
+
+  angular-frontend:
+    build: 
+      context: ./frontend
+    ports:
+      - 81:80
+    environment:
+      BACKEND_API: django-backend:8000
+
+  postgres-db:
+    image: postgis/postgis:13-3.3-alpine
+    volumes:
+      - postgis-data:/var/lib/postgresql
+    environment:
+      # If you need to create multiple database you can add coma separated databases eg gis,data
+      - POSTGRES_DB=italycoast
+      - POSTGRES_USER=italycoast
+      - POSTGRES_PASSWORD=italycoast
+      - ALLOW_IP_RANGE=0.0.0.0/0
+      # Add extensions you need to be enabled by default in the DB. Default are the five specified below
+      - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
+    ports:
+      - 5433:5432
+    restart: on-failure
+
+volumes:
+  postgis-data:

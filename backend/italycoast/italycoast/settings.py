@@ -13,7 +13,6 @@ from datetime import timedelta
 import os
 import environ
 from pathlib import Path
-from django.core.wsgi import get_wsgi_application
 
 env = environ.Env()
 environ.Env.read_env()
@@ -85,30 +84,16 @@ TEMPLATES = [
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-
-#Local
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql_psycopg2',
-       'NAME': 'italycoast',
-       'USER': 'italycoast',
-       'PASSWORD': 'italycoast',
-       'HOST': 'localhost',
-       'PORT': '5432'
-   }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env("DATABASE_NAME"),
+        'USER': env("DATABASE_USER"),
+        'PASSWORD': env("DATABASE_PASSWORD"),
+        'HOST': env("DATABASE_HOST"),
+        'PORT': env("DATABASE_PORT")
+    }
 }
-
-#Cloud
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#        'NAME': 'd2bbihm2h7rifg',
-#        'USER': 'kzjwitkumojxhv',
-#        'PASSWORD': 'fd4185a64657319eecd522e18b7111e398cd9b84de65f9033f533856294bf612',
-#        'HOST': 'ec2-99-81-197-185.eu-west-1.compute.amazonaws.com',
-#        'PORT': '5432'
-#    }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -169,5 +154,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-#WSGI_APPLICATION = 'italycoast.wsgi.application'
-application = get_wsgi_application()
+WSGI_APPLICATION = 'italycoast.wsgi.application'
