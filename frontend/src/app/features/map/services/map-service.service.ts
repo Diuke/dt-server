@@ -3,13 +3,13 @@ import { UrlsService } from 'src/app/core/services/urls.service';
 import { environment } from 'src/environments/environment';
 import Map from 'ol/Map';
 import { MapLayerModel } from 'src/app/core/models/mapLayerModel';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MapServiceService {
-  BASE_URL = environment.base_path;
+  BASE_URL = environment.backend_base_url;
 
   public globalMap: Map | null= null;
   public capturingAnalysisPoint: boolean = false;
@@ -34,12 +34,14 @@ export class MapServiceService {
 
   getLayersWMS(){
     let URL = this.urlsService.buildUrl("layers_wms");
-    return this.http.get(URL);
+    let headers = new HttpHeaders().set("Api-Key", this.urlsService.getApiKey());
+    return this.http.get(URL, {headers: headers});
   }
 
   getLayersWFS(){
     let URL = this.urlsService.buildUrl("layers_wfs");
-    return this.http.get(URL);
+    let headers = new HttpHeaders().set("Api-Key", this.urlsService.getApiKey());
+    return this.http.get(URL, {headers: headers});
   }
 
   getLayerHierarchy(start_date: string, end_date: string){
@@ -47,6 +49,7 @@ export class MapServiceService {
     if(start_date && end_date){
       URL += "?start_date=" + start_date + "&end_date=" + end_date;
     }
-    return this.http.get(URL);
+    let headers = new HttpHeaders().set("Api-Key", this.urlsService.getApiKey());
+    return this.http.get(URL, {headers: headers});
   }
 }

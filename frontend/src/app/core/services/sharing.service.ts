@@ -20,6 +20,8 @@ export class SharingService {
     let url = this.urlService.buildUrl("list_scenarios");
     let userToken = this.authService.getToken();
     let headers = new HttpHeaders().set("Authorization", "Bearer " + userToken);
+    let apiKey = this.urlService.getApiKey();
+    headers.set("Api-Key", apiKey);
     return this.http.get(url, {headers: headers});
   }
 
@@ -30,6 +32,8 @@ export class SharingService {
     };
     let userToken = this.authService.getToken();
     let headers = new HttpHeaders().set("Authorization", "Bearer " + userToken);
+    let apiKey = this.urlService.getApiKey();
+    headers.set("Api-Key", apiKey);
     let url = this.urlService.buildUrl("create_scenario");
     return this.http.post(url, body, {headers: headers});
   }
@@ -37,6 +41,8 @@ export class SharingService {
   deleteScenario(scenarioId: number){
     let userToken = this.authService.getToken();
     let headers = new HttpHeaders().set("Authorization", "Bearer " + userToken);
+    let apiKey = this.urlService.getApiKey();
+    headers.set("Api-Key", apiKey);
     let url = this.urlService.buildUrl("delete_scenario") + "?id=" + scenarioId.toString();
     return this.http.delete(url, {headers: headers});
   }

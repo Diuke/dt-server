@@ -13,6 +13,7 @@ from datetime import timedelta
 import os
 import environ
 from pathlib import Path
+from corsheaders.defaults import default_headers
 
 env = environ.Env()
 environ.Env.read_env()
@@ -30,9 +31,6 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
 
     'rest_framework',
+    'rest_framework_api_key',
     'django_extensions',
     'corsheaders',
 
@@ -117,7 +116,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework_api_key.permissions.HasAPIKey",
+    ]
 }
+
+API_KEY_CUSTOM_HEADER = "HTTP_API_KEY"
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
@@ -152,6 +156,18 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "https://webgis.italycoast.polimi.it",
+    "https://webgis.italycoast.polimi.it:8000",
+    "http://localhost",
+    "http://localhost:4200",
+    "http://localhost:8000"
+]
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "Api-Key",
+]
+
+CORS_ALLOW_ALL_ORIGINS = False
 
 WSGI_APPLICATION = 'italycoast.wsgi.application'

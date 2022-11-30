@@ -127,8 +127,8 @@ export class DTEMapComponent implements OnInit {
   activeBoundaryLayer: VectorLayer<VectorSource<Polygon>> | null;
 
   //Values of the date range form controls
-  dateFrom: string = "2020-04-01"; //"2018-01-01";
-  dateTo: string = "2020-10-01";//"2021-11-01";
+  dateFrom: string = "2021-04-01"; //"2018-01-01";
+  dateTo: string = "2021-10-01";//"2021-11-01";
 
   //ngModel of the select to pick the basemap.
   basemapSelect: number = this.OSM_BASEMAP; 
@@ -788,6 +788,8 @@ export class DTEMapComponent implements OnInit {
 
       } else {
         let dimensionsData = await this.mediator.getDimensionValues(_layer.data, paramName);
+        console.log(paramName);
+        
         if(dimensionsData == null){
           loadedParams++;
           this.loading = loadedParams < paramsToLoad;
@@ -795,6 +797,8 @@ export class DTEMapComponent implements OnInit {
           let values = dimensionsData["values"];
           if(paramName == "time"){
             values = this.utils.cropListOfDates(globalStartDate, globalEndDate, dimensionsData["values"]);
+            console.log(values);
+            
           }          
           //format = { default: string, units: string, name: string, values: list
           layer.paramsObject[paramName] = {

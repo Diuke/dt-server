@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LayerModel } from '../models/layerModel';
 import { MapLayerModel } from '../models/mapLayerModel';
@@ -16,7 +16,7 @@ export class MediatorService {
   public static GET_DATA_TIME_SERIES_TYPE = "time_series";
 
   private url_templates = {
-    "dimension_values": "/api/dte/mediator/list-parameter-values", // /layer_id/param_name
+    "dimension_values": "/api/dte/mediator/list-parameter-values/", // /layer_id/param_name
     "getData": "/api/dte/mediator/get-data",
     "getTimeSeries": "/api/dte/mediator/get-data",
     "getDepthProfile": "/api/dte/mediator/get-data",
@@ -73,11 +73,13 @@ export class MediatorService {
 
   // The available parameters are in the GetCapabilities request
   private async requestDimensionData(layer: LayerModel, dimension: string){
-    let url = this.urlService.BASE_PATH + this.url_templates["dimension_values"] + "/" + layer.id + "/" + dimension;
+    let url = this.urlService.BASE_PATH + this.url_templates["dimension_values"] + layer.id + "/" + dimension;
+    let apiKey = this.urlService.getApiKey();
+    let headers = new HttpHeaders().set("Api-Key", apiKey);
 
     let resp: any = null;
     if (url) {
-      let request = this.http.get(url).toPromise();
+      let request = this.http.get(url, {headers: headers}).toPromise();
       await request.then(data => {
         resp = data;
       }).catch(error => {
@@ -89,6 +91,8 @@ export class MediatorService {
 
   private async requestData(layer_model: MapLayerModel, coordinates: number[], params?: any): Promise<{value: any, units: string}> {
     let url = this.urlService.BASE_PATH + this.url_templates["getData"];
+    let apiKey = this.urlService.getApiKey();
+    let headers = new HttpHeaders().set("Api-Key", apiKey);
     let latMin = coordinates[0];
     let lngMin = coordinates[1];
     let latMax = latMin + 0.1; //0.1 meters bbox
@@ -111,7 +115,7 @@ export class MediatorService {
     };
     
     if (url) {
-      let request = this.http.post(url, body).toPromise();
+      let request = this.http.post(url, body, {headers: headers}).toPromise();
       await request.then(data => {
         resp = data;
       }).catch(error => {
@@ -130,6 +134,8 @@ export class MediatorService {
    */
   private async requestTimeSeries(layer_model: MapLayerModel, coordinates: number[], params: any){
     let url = this.urlService.BASE_PATH + this.url_templates["getTimeSeries"];
+    let apiKey = this.urlService.getApiKey();
+    let headers = new HttpHeaders().set("Api-Key", apiKey);
     let latMin = coordinates[0];
     let lngMin = coordinates[1];
     let latMax = latMin + 0.1; //0.1 meters bbox
@@ -145,7 +151,7 @@ export class MediatorService {
     };
 
     if (url) {
-      let request = this.http.post(url, body).toPromise();
+      let request = this.http.post(url, body, {headers: headers}).toPromise();
       await request.then(data => {
         resp = data;
       }).catch(error => {
@@ -162,10 +168,10 @@ export class MediatorService {
    * @param params should be bbox and optionally time or other dimensions.
    * @returns 
    */
-  private async requestDepthProfile(layer_model: MapLayerModel, coordinates: number[], params: any){
-    console.log(params);
-    
+  private async requestDepthProfile(layer_model: MapLayerModel, coordinates: number[], params: any){    
     let url = this.urlService.BASE_PATH + this.url_templates["getDepthProfile"];
+    let apiKey = this.urlService.getApiKey();
+    let headers = new HttpHeaders().set("Api-Key", apiKey);
     let latMin = coordinates[0];
     let lngMin = coordinates[1];
     let latMax = latMin + 0.1; //0.1 meters bbox
@@ -181,7 +187,7 @@ export class MediatorService {
     };
 
     if (url) {
-      let request = this.http.post(url, body).toPromise();
+      let request = this.http.post(url, body, {headers: headers}).toPromise();
       await request.then(data => {
         resp = data;
       }).catch(error => {
@@ -199,6 +205,8 @@ export class MediatorService {
    */
   private async requestAreaData(layer_model: MapLayerModel, params: any){
     let url = this.urlService.BASE_PATH + this.url_templates["getAreaData"];
+    let apiKey = this.urlService.getApiKey();
+    let headers = new HttpHeaders().set("Api-Key", apiKey);
     let body = {
       layer_id: layer_model.data.id,
       type: MediatorService.GET_DATA_AREA_TYPE,
@@ -213,7 +221,7 @@ export class MediatorService {
 
     let resp: any = null;
     if (url) {
-      let request = this.http.post(url, body).toPromise();
+      let request = this.http.post(url, body, {headers: headers}).toPromise();
       await request.then(data => {
         resp = data;
       }).catch(error => {

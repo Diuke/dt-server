@@ -2,6 +2,7 @@ import simplejson
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework_api_key.permissions import HasAPIKey
 from twin_earth.models import Layer
 from rest_framework.response import Response
 from rest_framework import status as http_status
@@ -14,7 +15,7 @@ AREA_REQUEST_TYPE = "area"
 TIME_SERIES_REQUEST_TYPE = "time_series"
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([HasAPIKey])
 def get_list_of_parameter_values(request, layer_id, parameter):
     try:
         layer = Layer.objects.get(id=int(layer_id))
@@ -35,7 +36,7 @@ def get_list_of_parameter_values(request, layer_id, parameter):
     return Response(params, http_status.HTTP_200_OK)
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([HasAPIKey])
 def get_data(request):
     try:
         data = simplejson.loads(request.body)
