@@ -161,7 +161,17 @@ CORS_ALLOWED_ORIGINS = [
     "https://webgis.italycoast.polimi.it:8000",
     "http://localhost",
     "http://localhost:4200",
-    "http://localhost:8000"
+    "http://localhost:8000",
+    "http://3.126.70.225",
+    "http://3.70.64.164",
+    "http://ec2-3-126-70-225.eu-central-1.compute.amazonaws.com",
+    "http://ec2-3-70-64-164.eu-central-1.compute.amazonaws.com"
+]
+
+ALLOWED_HOSTS = [
+    "3.126.70.225",
+    "localhost",
+    "127.0.0.1"
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [

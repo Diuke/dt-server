@@ -3,11 +3,11 @@ version: '3.8'
 services:
   django-backend: 
     container_name: backend4${COMPOSE_PROJECT_NAME} 
-    image: juanpduque/digital-twin-platform-backend:test 
-    #build: ./backend
+    #image: juanpduque/digital-twin-platform-backend:test 
+    build: .
     ports:
-      - 8000:8000
-      #- 80:80
+      #- 8000:8000
+      - 80:80
     env_file:
       - .env  
 
@@ -18,7 +18,7 @@ services:
     env_file:
       - .env
     ports:
-      - 5433:5432
+      - 5432:5432
     restart: on-failure
 
 volumes:

@@ -335,6 +335,10 @@
 
     </div>
 
+    <!-- <div [class]="{'left-margin': sidebarLeftOpen}" class="basemap-picker ol-control">
+        <input type="range" class="form-range" id="customRange1">
+    </div> -->
+
     <div class="map-container" [class]="{'left-margin': sidebarLeftOpen, 'right-margin': sidebarRightOpen}" id="map">
         <!--
         <div class="date-slider"
@@ -351,6 +355,11 @@
         <a style="cursor: pointer;" id="popup-closer" class="ol-popup-closer" (click)="closePopup()"></a>
         <div class="spinner-border" role="status" *ngIf="loadingClickPopupValues">
             <span class="sr-only">Loading...</span>
+        </div>
+        <div *ngIf="currentPopupLocation">
+            <span style="font-weight: bold;">Location: </span>
+            <span>{{ currentPopupLocation[1] | number: '1.0-6' }}, {{ currentPopupLocation[0] | number: '1.0-6' }}</span>
+            <hr>
         </div>
         <div id="dataPreviewPopupContent" *ngFor="let value of dataPreviewPopupContent; let i = index">
             <span>{{value?.layer}}</span>

@@ -6,7 +6,6 @@ from twin_earth import models as dte_models
 
 def get_data(layer, params):
     url = clms_utils.build_copernicus_land_service_url(layer, params)
-    print(url)
     
     resp_body = {}
     if layer.type == dte_models.Layer.LayerType.ARCGIS_ImageServer:

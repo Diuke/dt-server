@@ -3,8 +3,8 @@ version: '3.8'
 services:
   angular-frontend:
     container_name: frontend4${COMPOSE_PROJECT_NAME}
-    image: juanpduque/digital-twin-platform-frontend:test 
-    #build: ./frontend
+    #image: juanpduque/digital-twin-platform-frontend:test 
+    build: .
     ports:
       - 80:80
     env_file:
