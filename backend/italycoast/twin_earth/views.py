@@ -2,6 +2,7 @@ import datetime
 
 import xml.etree.ElementTree as ET
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.db.models import Q
 from rest_framework.response import Response
@@ -14,35 +15,35 @@ from rest_framework import status as http_status
 # Create your views here.
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([HasAPIKey])
 def wfs_layers(request):
     layers = dte_models.Layer.objects.filter(type=dte_models.Layer.LayerType.WFS.name, enabled=True)
     serializer = dte_serializers.LayerSerializer(layers, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([HasAPIKey])
 def wms_layers(request):
     layers = dte_models.Layer.objects.filter(type=dte_models.Layer.LayerType.WMS.name, enabled=True)
     serializer = dte_serializers.LayerSerializer(layers, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([HasAPIKey])
 def all_layers(request):
     layers = dte_models.Layer.objects.all()
     serializer = dte_serializers.LayerSerializer(layers, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([HasAPIKey])
 def categories(request):
     categories = dte_models.Category.objects.all()
     serializer = dte_serializers.BasicCategorySerializer(categories, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([HasAPIKey])
 def categories_hierarchy(request):
     start_filter_parameter = request.GET.get('start_date') #AAAA-MM-DD
     end_filter_parameter = request.GET.get('end_date') #YYYY-MM-DD

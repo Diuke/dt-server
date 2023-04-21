@@ -17,6 +17,8 @@ urlpatterns = [
     path('mediator/get-data', mediator_views.get_data, name='get_layer_data'),    
     path('mediator/list-parameter-values/<str:layer_id>/<str:parameter>', mediator_views.get_list_of_parameter_values, name='categories_hierarchy'),    
 
+    path('mediator/update-layers', mediator_views.update_layers, name='update_layers'),    
+
     # # Copernicus marine services
     #path('copernicus_marine_services/list_parameter_values/<str:layer_id>/<str:parameter>', copernicus_marine_services_views.get_list_of_parameter_values, name='categories_hierarchy'),    
     # #path('copernicus_marine_services/update_layers', copernicus_marine_services_views.update_layers, name='copernicus_marine_services_update_layers'),

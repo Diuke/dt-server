@@ -5,9 +5,9 @@ import OSM from 'ol/source/OSM';
 import WMTS, { optionsFromCapabilities as optionsFromWMTSCapabilities } from  'ol/source/WMTS';
 import WMTSCapabilities from 'ol/format/WMTSCapabilities';
 import TileWMS from 'ol/source/TileWMS';
-import Draw from 'ol/interaction/Draw'
+import Draw, { createBox } from 'ol/interaction/Draw'
 import GeoJSON from 'ol/format/GeoJSON';
-import { fromLonLat } from 'ol/proj';
+import { fromLonLat, transform } from 'ol/proj';
 import { Layer, Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
 import VectorSource from 'ol/source/Vector';
 import ImageArcGISRest from 'ol/source/ImageArcGISRest';
@@ -127,8 +127,10 @@ export class DTEMapComponent implements OnInit {
   activeBoundaryLayer: VectorLayer<VectorSource<Polygon>> | null;
 
   //Values of the date range form controls
-  dateFrom: string = "2020-04-01"; //"2018-01-01";
-  dateTo: string = "2020-10-01";//"2021-11-01";
+  DEFAULT_DATE_FROM = "2021-04-01";
+  DEFAULT_DATE_TO = new Date().toISOString().split("T")[0]; //Today
+  dateFrom: string = this.DEFAULT_DATE_FROM;
+  dateTo: string = this.DEFAULT_DATE_TO;
 
   //ngModel of the select to pick the basemap.
   basemapSelect: number = this.OSM_BASEMAP; 
@@ -165,6 +167,7 @@ export class DTEMapComponent implements OnInit {
   dataPreviewPopupCloser: HTMLElement;
   dataPreviewOverlay: Overlay;
   loadingClickPopupValues: boolean = false;
+  currentPopupLocation: Coordinate | null = null;
 
   constructor(
     private mapService: MapServiceService,
@@ -177,6 +180,8 @@ export class DTEMapComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log(this.DEFAULT_DATE_TO);
+    
     this.isLoggedIn = this.authService.isLoggedIn();
     this.initMap();
     this.initStaticLayers();
@@ -292,6 +297,7 @@ export class DTEMapComponent implements OnInit {
           this.loadingClickPopupValues = true;
           this.dataPreviewPopupContent = [];
           this.openPopup(evt.coordinate);
+          this.currentPopupLocation = transform(evt.coordinate, "EPSG:3857", "EPSG:4326");
           if(this.listOfSelectedLayers.length === 0){
             this.loadingClickPopupValues = false;
             this.dataPreviewPopupContent = [{layer: "", value:"No active layers"}];
@@ -303,9 +309,16 @@ export class DTEMapComponent implements OnInit {
                   params[layer.params[param]] = layer.paramsObject[layer.params[param]].selected;
                 }
                 this.mediator.getData(layer, evt.coordinate, params).then(data => {
-                  this.dataPreviewPopupContent.push(
-                    {layer: layer.data.readable_name + ": ", value: data.value + " " + data.units}
-                  );
+                  if(data){
+                    this.dataPreviewPopupContent.push(
+                      {layer: layer.data.readable_name + ": ", value: data.value + " " + data.units}
+                    );
+                  } else {
+                    this.dataPreviewPopupContent.push(
+                      {layer: "No data for layer: " + layer.data.readable_name}
+                    );
+                  }
+                  
                 });
               }
               
@@ -531,7 +544,8 @@ export class DTEMapComponent implements OnInit {
   activateDrawingAOI() {
     this.aoiPolygonDraw = new Draw({
       source: this.aoiSource,
-      type: "Polygon",
+      type: "Circle",
+      geometryFunction: createBox(),
     });
     this.map.addInteraction(this.aoiPolygonDraw);
     this.aoiVectorLayer.getSource().on('addfeature', (event) => {
@@ -722,8 +736,8 @@ export class DTEMapComponent implements OnInit {
     this.layerMap = {};
     this.layersHierarchy = [];
     this.displayLayersHierarchy = [];
-    this.dateFrom = "";
-    this.dateTo = "";
+    this.dateFrom = this.DEFAULT_DATE_FROM;
+    this.dateTo = this.DEFAULT_DATE_TO;
     this.aoiState = this.NO_AOI;
     this.globals.bbox = [];
     this.globals.areaOfInterest = null;
@@ -731,6 +745,7 @@ export class DTEMapComponent implements OnInit {
     this.loadingLayers = false;
     this.analysisUnits = [];
     this.deactivateDrawingAOI();
+    this.closePopup();
   }
 
   setGlobalDate(){
@@ -788,6 +803,7 @@ export class DTEMapComponent implements OnInit {
 
       } else {
         let dimensionsData = await this.mediator.getDimensionValues(_layer.data, paramName);
+        
         if(dimensionsData == null){
           loadedParams++;
           this.loading = loadedParams < paramsToLoad;
@@ -795,6 +811,7 @@ export class DTEMapComponent implements OnInit {
           let values = dimensionsData["values"];
           if(paramName == "time"){
             values = this.utils.cropListOfDates(globalStartDate, globalEndDate, dimensionsData["values"]);
+            
           }          
           //format = { default: string, units: string, name: string, values: list
           layer.paramsObject[paramName] = {
@@ -877,6 +894,7 @@ export class DTEMapComponent implements OnInit {
   closePopup(){
     this.dataPreviewOverlay.setPosition(undefined!);
     this.dataPreviewPopupCloser?.blur();
+    this.currentPopupLocation = null;
   }
 
   generateApplicationState(){
@@ -890,7 +908,6 @@ export class DTEMapComponent implements OnInit {
       },
 
       layers: Object.values(this.listOfSelectedLayers).map((element) => {
-        debugger
         return {
           id: element.data.id,
           expanded: element.expanded,

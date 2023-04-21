@@ -56,6 +56,3 @@ EXPOSE 8000
 STOPSIGNAL SIGTERM
 RUN chmod +x /usr/src/app/start-server.sh
 ENTRYPOINT ["/usr/src/app/start-server.sh"]
-#ENTRYPOINT /usr/src/app/start-server.sh
-
-#CMD ["/usr/src/app/start-server.sh"]

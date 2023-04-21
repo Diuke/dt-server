@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  base_path: "http://localhost:8000"
-  //base_path: "https://dte-italycoasts-backend.herokuapp.com"
+  backend_base_url: "http://localhost:8000",
+  api_key: "QvTrI3OT.RjeP84dlgTai84UhknU92pk6MKOXX4OL"
 };
 
 /*
