@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import VectorSource from 'ol/source/Vector';
-import { AuthService } from 'src/app/features/map/services/auth.service';
 import { ApplicationState } from '../models/applicationState';
 import { UrlsService } from './urls.service';
 
@@ -13,39 +12,38 @@ export class SharingService {
   constructor(
     private http: HttpClient,
     private urlService: UrlsService,
-    private authService: AuthService
   ) { }
 
-  loadUserScenarios(){
-    let url = this.urlService.buildUrl("list_scenarios");
-    let userToken = this.authService.getToken();
-    let headers = new HttpHeaders().set("Authorization", "Bearer " + userToken);
-    let apiKey = this.urlService.getApiKey();
-    headers.set("Api-Key", apiKey);
-    return this.http.get(url, {headers: headers});
-  }
+//   loadUserScenarios(){
+//     let url = this.urlService.buildUrl("list_scenarios");
+//     let userToken = this.authService.getToken();
+//     let headers = new HttpHeaders().set("Authorization", "Bearer " + userToken);
+//     let apiKey = this.urlService.getApiKey();
+//     headers.set("Api-Key", apiKey);
+//     return this.http.get(url, {headers: headers});
+//   }
 
-  createScenario(scenarioName: string, scenarioJsonString: string){
-    let body = {
-      scenario_json: scenarioJsonString,
-      name: scenarioName
-    };
-    let userToken = this.authService.getToken();
-    let headers = new HttpHeaders().set("Authorization", "Bearer " + userToken);
-    let apiKey = this.urlService.getApiKey();
-    headers.set("Api-Key", apiKey);
-    let url = this.urlService.buildUrl("create_scenario");
-    return this.http.post(url, body, {headers: headers});
-  }
+//   createScenario(scenarioName: string, scenarioJsonString: string){
+//     let body = {
+//       scenario_json: scenarioJsonString,
+//       name: scenarioName
+//     };
+//     let userToken = this.authService.getToken();
+//     let headers = new HttpHeaders().set("Authorization", "Bearer " + userToken);
+//     let apiKey = this.urlService.getApiKey();
+//     headers.set("Api-Key", apiKey);
+//     let url = this.urlService.buildUrl("create_scenario");
+//     return this.http.post(url, body, {headers: headers});
+//   }
 
-  deleteScenario(scenarioId: number){
-    let userToken = this.authService.getToken();
-    let headers = new HttpHeaders().set("Authorization", "Bearer " + userToken);
-    let apiKey = this.urlService.getApiKey();
-    headers.set("Api-Key", apiKey);
-    let url = this.urlService.buildUrl("delete_scenario") + "?id=" + scenarioId.toString();
-    return this.http.delete(url, {headers: headers});
-  }
+//   deleteScenario(scenarioId: number){
+//     let userToken = this.authService.getToken();
+//     let headers = new HttpHeaders().set("Authorization", "Bearer " + userToken);
+//     let apiKey = this.urlService.getApiKey();
+//     headers.set("Api-Key", apiKey);
+//     let url = this.urlService.buildUrl("delete_scenario") + "?id=" + scenarioId.toString();
+//     return this.http.delete(url, {headers: headers});
+//   }
 
   public exampleScenario: ApplicationState = {
     "context": {

@@ -162,14 +162,17 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost",
     "http://localhost:4200",
     "http://localhost:8000",
-    "http://3.126.70.225",
-    "http://3.70.64.164",
-    "http://ec2-3-126-70-225.eu-central-1.compute.amazonaws.com",
-    "http://ec2-3-70-64-164.eu-central-1.compute.amazonaws.com"
+    "http://3.77.73.106",
+    "http://18.159.82.164",
+    "http://ec2-18-159-82-164.eu-central-1.compute.amazonaws.com"
+    "http://ec2-3-77-73-106.eu-central-1.compute.amazonaws.com"
 ]
 
 ALLOWED_HOSTS = [
-    "3.126.70.225",
+    "3.77.73.106",
+    "18.159.82.164",
+    "ec2-3-77-73-106.eu-central-1.compute.amazonaws.com",
+    "ec2-18-159-82-164.eu-central-1.compute.amazonaws.com",
     "localhost",
     "127.0.0.1"
 ]
@@ -177,7 +180,5 @@ ALLOWED_HOSTS = [
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "Api-Key",
 ]
-
-CORS_ALLOW_ALL_ORIGINS = False
 
 WSGI_APPLICATION = 'italycoast.wsgi.application'

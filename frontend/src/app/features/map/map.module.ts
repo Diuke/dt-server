@@ -15,7 +15,8 @@ import { TutorialComponent } from './components/tutorial/tutorial.component';
     DTEMapComponent,
     TreeViewComponent,
     AnalysisUnitComponent, 
-    NavbarComponent, TutorialComponent
+    NavbarComponent, 
+    TutorialComponent
   ],
   imports: [
     CommonModule,

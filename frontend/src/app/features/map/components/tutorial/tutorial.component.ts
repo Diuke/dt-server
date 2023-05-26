@@ -36,17 +36,21 @@ export class TutorialComponent implements OnInit, OnDestroy {
   }
 
   nextPage(){
+    //Scroll to the top of the page-content container on page change
+    document.getElementById("page-content").scroll(0,0);
     let newPage = this.page - 1;
     this.page = newPage < 0 ? 0 : newPage;
   }
 
   previousPage(){
+    //Scroll to the top of the page-content container on page change
+    document.getElementById("page-content").scroll(0,0);
     let newPage = this.page + 1;
     this.page = newPage > this.lastPage ? this.lastPage : newPage;
   }
 
   closeTutorial(){
-    this.tutorialService.deactiveTutorial();
+    this.tutorialService.deactivateTutorial();
   }
 
 }

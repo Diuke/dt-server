@@ -23,7 +23,7 @@ export class TutorialService {
     this.isTutorialActive = true;
   }
 
-  deactiveTutorial(){
+  deactivateTutorial(){
     this.isTutorialActive = false;
   }
 }

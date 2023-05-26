@@ -8,7 +8,7 @@
 
     <!-- Modal -->
     <div class="modal tutorial-modal" data-backdrop="false" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog tutorial-modal-dialog" role="document">
         <div class="modal-content">
 
             <div class="modal-header">
@@ -16,9 +16,80 @@
             </div>
 
             <div class="modal-body">
-                <div>
-                    Coming soon!         
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-1 page-button" (click)="nextPage()">&lt;</div>
+                        <div class="col-10 page-content" id="page-content">
+                            <div id="slide-0" *ngIf="page == 0">
+                                <p class="text-justify">
+                                    <strong><h4>Welcome to COP-CW - Copernicus Coastal Web Viewer.</h4></strong>
+                                    <br>
+
+                                    This is an Open Source Web platform that aims to integrate multiple geospatial data sources, specially from Copernicus services, that are of interest for the study of the Italian coasts.
+                                    It allows the parametric visualization of multiple geospatial layers, simple data analysis, and experiment sharing. 
+                                    <br><br>
+
+                                    It uses the Mediator/Wrapper architecture, as a data integration strategy, to consume the data directly from the services instead of replicating it.
+                                    It currently includes data from Copernicus Marine Environment Monitoring Service (CMEMS), Copernicus Land Monitoring Service (CLMS), Copernicus Atmosphere Monitoring Service (CAMS), Italian Geoportal, WorldPop, but more services are being incrementally included.
+                                    <br><br>
+
+                                    To use the platform, follow this 5-step workflow, which will be further explained in each of the following sections of the tutorial.
+                                    <br>
+                                    <br>
+                                    <img src="assets/images/tutorial/tutorial-workflow.png" class="w-100">
+                                </p>
+
+                            </div>
+            
+                            <div id="slide-1" *ngIf="page == 1">
+                                <p class="text-justify">
+                                    <strong><h3>Step 1: Context Definition</h3></strong>
+                                    
+                                    <br>
+                                    First, in order to filter and select between all the data that is currently available, it is necesary to set a spatiotemporal context.
+                                    This context is the combination of a range of dates (1) and an Area of Interest (2).
+                                    <br><br>
+                                    <img src="assets/images/tutorial/tuto-context-1.png" class="w-100">
+                                    <br><br>
+
+                                    <br><br>
+                                    <img src="assets/images/tutorial/tuto-context-2.png" class="w-100">
+                                    <br><br>
+
+                                    <br><br>
+                                    <img src="assets/images/tutorial/tuto-context-3.png" class="w-100">
+                                    <br><br>
+
+                                    It uses the Mediator/Wrapper architecture, as a data integration strategy, to consume the data directly from the services instead of replicating it.
+                                    It currently includes data from Copernicus Marine Environment Monitoring Service (CMEMS), Copernicus Land Monitoring Service (CLMS), Copernicus Atmosphere Monitoring Service (CAMS), Italian Geoportal, WorldPop, but more services are being incrementally included.
+                                    <br><br>
+
+                                    To use the platform, follow this 5-step workflow, which will be further explained in each of the following sections of the tutorial.
+                                    <br><br>
+                                    
+                                </p>
+                            </div>
+            
+                            <div id="slide-2" *ngIf="page == 2">
+                                Slide 2
+                            </div>
+            
+                            <div id="slide-3" *ngIf="page == 3">
+                                Slide 3
+                            </div>
+            
+                            <div id="slide-4" *ngIf="page == 4">
+                                Slide 4
+                            </div>
+            
+                            <div id="slide-5" *ngIf="page == 5">
+                                Slide 5
+                            </div>
+                        </div>
+                        <div class="col-1 page-button" (click)="previousPage()">&gt;</div>
+                    </div>
                 </div>
+                
             </div>
         </div>
         </div>

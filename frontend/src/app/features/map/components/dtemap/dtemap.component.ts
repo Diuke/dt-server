@@ -18,7 +18,6 @@ import { faBars, faDrawPolygon, faGreaterThan, faLessThan, faEye, faEyeSlash, fa
 import Polygon from 'ol/geom/Polygon';
 import Fill from 'ol/style/Fill';
 import { getVectorContext } from 'ol/render';
-import { AuthService } from '../../services/auth.service';
 import { UtilsService } from 'src/app/core/services/utils.service';
 import { MediatorService } from 'src/app/core/services/mediator.service';
 import { GlobalsService } from 'src/app/core/services/globals.service';
@@ -171,7 +170,6 @@ export class DTEMapComponent implements OnInit {
 
   constructor(
     private mapService: MapServiceService,
-    private authService: AuthService,
     private mediator: MediatorService,
     public globals: GlobalsService,
     private utils: UtilsService,
@@ -182,15 +180,11 @@ export class DTEMapComponent implements OnInit {
   ngOnInit(): void {
     console.log(this.DEFAULT_DATE_TO);
     
-    this.isLoggedIn = this.authService.isLoggedIn();
     this.initMap();
     this.initStaticLayers();
     //this.fetchLayerList();
     this.initLayerEvents();
     //this.initLayers();
-    if(this.isLoggedIn){
-      this.loadScenariosList();
-    }
   }
 
   createAnalysisUnit(){
@@ -1001,20 +995,20 @@ export class DTEMapComponent implements OnInit {
     }
   }
 
-  saveScenario(){
-    let scenarioJson = JSON.stringify(this.generateApplicationState());
-    let name = this.scenarioName == "" ? "New Scenario" : this.scenarioName;
-    this.sharingService.createScenario(name, scenarioJson).subscribe((data: any) => {
-      console.log("Your scenario was created!");
-      this.loadScenariosList();
-    });
-  }
+  // saveScenario(){
+  //   let scenarioJson = JSON.stringify(this.generateApplicationState());
+  //   let name = this.scenarioName == "" ? "New Scenario" : this.scenarioName;
+  //   this.sharingService.createScenario(name, scenarioJson).subscribe((data: any) => {
+  //     console.log("Your scenario was created!");
+  //     this.loadScenariosList();
+  //   });
+  // }
 
-  deleteScenario(scenario: ScenarioModel){
-    this.sharingService.deleteScenario(scenario.id).subscribe((data: any) => {
-      this.loadScenariosList();
-    })
-  }
+  // deleteScenario(scenario: ScenarioModel){
+  //   this.sharingService.deleteScenario(scenario.id).subscribe((data: any) => {
+  //     this.loadScenariosList();
+  //   })
+  // }
 
   downloadScenario(){
     let sharingObject = this.generateApplicationState();
@@ -1032,11 +1026,11 @@ export class DTEMapComponent implements OnInit {
     a.remove();
   }
 
-  loadScenariosList(){
-    this.sharingService.loadUserScenarios().subscribe((data: any) => {
-      this.userScenarios = data;
-    });
-  }
+  // loadScenariosList(){
+  //   this.sharingService.loadUserScenarios().subscribe((data: any) => {
+  //     this.userScenarios = data;
+  //   });
+  // }
 
   applyScenario(scenario: ScenarioModel){
     let scenarioObject = JSON.parse(scenario.scenario_json);
