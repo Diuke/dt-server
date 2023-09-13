@@ -16,7 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls.conf import include
+from api import urls as api_urls
+from mediator import urls as mediator_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include(api_urls.urlpatterns)),
+    path('mediator/', include(mediator_urls.urlpatterns))
 ]

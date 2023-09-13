@@ -1,0 +1,33 @@
+import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UrlsService {
+
+  constructor() { }
+
+  public BASE_PATH = environment.backend_base_url;
+  public API_KEY = environment.api_key;
+
+  private urls_patterns: { [key: string]: string } = {
+    "login": "/api/auth/token/",
+    "refresh": "/api/auth/token/refresh/",
+    "layers_wms": "/api/dte/layers/wms/",
+    "layers_wfs": "/api/dte/layers/wfs/",
+    "all_layers": "/api/dte/layers/all/",
+    "layer_hierarchy": "/api/categories_hierarchy/",
+    "list_scenarios": "/api/scenarios/list/",
+    "create_scenario": "/api/scenarios/create/",
+    "delete_scenario": "/api/scenarios/delete/",
+  }
+
+  buildUrl(identifyer: string){
+    return this.BASE_PATH + this.urls_patterns[identifyer];
+  }
+
+  getApiKey(){
+    return this.API_KEY;
+  }
+}

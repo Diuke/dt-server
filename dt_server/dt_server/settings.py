@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import environ
 import os
 from pathlib import Path
+from corsheaders.defaults import default_headers
 
 #Default env
 env = environ.Env()
@@ -42,7 +43,6 @@ if os.name == 'nt':
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -54,6 +54,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "django.contrib.gis",
 
+    "corsheaders",
+    'rest_framework',
+    'rest_framework_api_key',
+
     "api",
     "mediator",
     "wrappers",
@@ -62,6 +66,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -89,6 +94,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dt_server.wsgi.application'
 
+API_KEY_CUSTOM_HEADER = "HTTP_API_KEY"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -101,6 +107,12 @@ DATABASES = {
         'HOST': env("DATABASE_HOST"),
         'PORT': env("DATABASE_PORT")
     },
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework_api_key.permissions.HasAPIKey",
+    ]
 }
 
 
@@ -134,6 +146,15 @@ USE_I18N = True
 
 USE_TZ = True
 
+DATE_INPUT_FORMATS = [
+    '%d-%m-%Y'
+]
+
+#CORS configuration
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "Api-Key",
+]
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
