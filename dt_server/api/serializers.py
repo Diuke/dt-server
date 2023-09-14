@@ -11,6 +11,7 @@ class BasicCategorySerializer(serializers.Serializer):
         fields = "__all__"
 
 class LayerServiceSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     service_type = serializers.CharField()
     url = serializers.CharField()
     wrapper_name = serializers.CharField()

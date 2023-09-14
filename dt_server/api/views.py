@@ -1,10 +1,32 @@
 import datetime
+import requests
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_api_key.permissions import HasAPIKey
 from django.db.models import Q
 from rest_framework.response import Response
+from rest_framework import status as http_status
 import api.models as dt_server_models
 import api.serializers as dte_serializers
+
+@api_view(['GET'])
+@permission_classes([HasAPIKey])
+def proxy_request(request):
+    proxy_url = request.GET.get('url')
+    try:
+        response = requests.get(proxy_url)
+        return Response(response)
+    except Exception as ex:
+        return Response(http_status.HTTP_404_NOT_FOUND)
+
+# @api_view(['POST'])
+# @permission_classes([HasAPIKey])
+# def proxy_request(request):
+#     proxy_url = request.GET.get('url')
+#     try:
+#         response = requests.post(proxy_url)
+#         return Response(response)
+#     except Exception as ex:
+#         return Response(http_status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 @permission_classes([HasAPIKey])

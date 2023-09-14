@@ -7,9 +7,10 @@ from wrappers.copernicus_marine_service import utils as cmems_utils
 from api import utils as general_utils
 from django.contrib.gis.geos import GEOSGeometry
 
-def get_parameters(layer, parameter):
+def get_parameters(layer, layer_service, parameter):
+
     urlSuffix = "?request=GetCapabilities&service=WMS&VERSION=1.3.0&layer=" + layer.layer_name
-    url = layer.service_url + urlSuffix
+    url = layer_service.url + urlSuffix
     namespaces = {
         "opengis": "http://www.opengis.net/wms" 
     }

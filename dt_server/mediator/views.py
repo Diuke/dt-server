@@ -1,11 +1,12 @@
 import simplejson
 import xml.etree.ElementTree as ET
 import requests
+import importlib
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework_api_key.permissions import HasAPIKey
-from api.models import Layer
+from api.models import Layer, LayerService
 from rest_framework.response import Response
 from rest_framework import status as http_status
 from wrappers.copernicus_marine_service import wrapper as cmems_wrapper
@@ -24,32 +25,47 @@ VISUALIZE = "visualize"
 @api_view(['GET'])
 @permission_classes([HasAPIKey])
 def get_list_of_parameter_values(request, layer_id, parameter):
+    layer_service_id = request.GET.get('layer_service_id')
+
     try:
         layer = Layer.objects.get(id=int(layer_id))
+        layer_service = LayerService.objects.get(id=int(layer_service_id))
     except Exception as ex:
         return Response(http_status.HTTP_404_NOT_FOUND)
 
     params = {}
-    #route the request to the specific wrapper
-    if layer.source == "Copernicus Marine Service":
-        params = cmems_wrapper.get_parameters(layer, parameter)
 
-    elif layer.source == "Copernicus Land Monitoring Service":
+    wrapper = layer_service.wrapper_name
+    wrapper_module_name = f"wrappers.{wrapper}.wrapper"
+    wrapper_module = importlib.import_module(wrapper_module_name)
+
+    try:
+        params = wrapper_module.get_parameters(layer, layer_service, parameter)
+    except Exception as ex:
         return Response("Incorrect Source", http_status.HTTP_400_BAD_REQUEST)
-
-    elif layer.source == "WorldPop":
-        return Response("Incorrect Source", http_status.HTTP_400_BAD_REQUEST)
-
-    elif layer.source == "Geoportale Nazionale":
-        return Response("Incorrect Source", http_status.HTTP_400_BAD_REQUEST)
-
-    elif layer.source == "Copernicus Atmosphere Monitoring Service":
-        params = cams_wrapper.get_parameters(layer, parameter)
     
-    else:
-        return Response("Incorrect Layer", http_status.HTTP_400_BAD_REQUEST)
-
     return Response(params, http_status.HTTP_200_OK)
+    
+    # #route the request to the specific wrapper
+    # if layer.source == "Copernicus Marine Service":
+    #     params = cmems_wrapper.get_parameters(layer, parameter)
+
+    # elif layer.source == "Copernicus Land Monitoring Service":
+    #     return Response("Incorrect Source", http_status.HTTP_400_BAD_REQUEST)
+
+    # elif layer.source == "WorldPop":
+    #     return Response("Incorrect Source", http_status.HTTP_400_BAD_REQUEST)
+
+    # elif layer.source == "Geoportale Nazionale":
+    #     return Response("Incorrect Source", http_status.HTTP_400_BAD_REQUEST)
+
+    # elif layer.source == "Copernicus Atmosphere Monitoring Service":
+    #     params = cams_wrapper.get_parameters(layer, parameter)
+    
+    # else:
+    #     return Response("Incorrect Layer", http_status.HTTP_400_BAD_REQUEST)
+
+    # return Response(params, http_status.HTTP_200_OK)
 
 @api_view(['POST'])
 @permission_classes([HasAPIKey])
